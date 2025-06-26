@@ -1,0 +1,39 @@
+﻿@using LibraryManagementSystem.Model
+@model Book
+
+@{
+    ViewData["Title"] = "Delete Book";
+}
+
+<h2 class="my-4 text-danger">@ViewData["Title"]</h2>
+
+<h3>Are you sure you want to delete this book?</h3>
+
+<div class="card mt-3 p-3">
+    <dl class="row">
+        <dt class="col-sm-3">Id:</dt>
+        <dd class="col-sm-9">@Model.BookId</dd>
+
+        <dt class="col-sm-3">Title:</dt>
+        <dd class="col-sm-9">@Model.Title</dd>
+
+        <dt class="col-sm-3">Subject:</dt>
+        <dd class="col-sm-9">@Model?.Subject?.Name</dd>
+
+        <dt class="col-sm-3">Synopsis:</dt>
+        <dd class="col-sm-9">@Model?.Synopsis</dd>
+    </dl>
+</div>
+<br />
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="BookId" />
+
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@if (TempData["Error"] != null)
+{
+    <br />
+    <p style="color: red">@TempData["Error"]</p>
+}

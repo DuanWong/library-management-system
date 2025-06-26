@@ -1,0 +1,56 @@
+﻿@using LibraryManagementSystem.Model
+@model IEnumerable<Loan>
+
+@{
+    ViewData["Title"] = "Loans";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (User.IsInRole("Librarian"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Add New Loan</a>
+    </p>
+}
+
+<table class="table table-striped table-bordered">
+    <thead class="table-light">
+        <tr>
+            <th>Loan Id</th>
+            <th>Reader</th>
+            <th>Initial Date</th>
+            <th>Final Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            @foreach (Loan loan in Model)
+            {
+                <tr>
+                    <td>@loan.LoanId</td>
+                    <td>@loan?.Reader?.FullName</td>
+                    <td>@loan?.InitialDate</td>
+                    <td>@loan?.FinalDate</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@loan.LoanId" class="btn btn-info btn-sm">Details</a>
+
+                        @if (User.IsInRole("Librarian"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@loan.LoanId" class="btn btn-warning btn-sm">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@loan.LoanId" class="btn btn-danger btn-sm">Delete</a>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="text-center">There are no registered loans.</td>
+            </tr>
+        }
+    </tbody>
+</table>

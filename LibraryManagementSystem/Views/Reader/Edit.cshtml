@@ -1,0 +1,65 @@
+﻿@using LibraryManagementSystem.Common
+@using LibraryManagementSystem.Model
+@model Reader
+
+@{
+    ViewData["Title"] = "Edit Reader";
+    int counter = 0;
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Edit">
+    <input type="hidden" asp-for="ReaderId" />
+    <input type="hidden" asp-for="CoreId" value="Temporal-@Model.ReaderId" />
+
+    <div class="mb-3">
+        <label asp-for="FirstName" class="form-label">First Name</label>
+        <input asp-for="FirstName" class="form-control"
+               maxlength="30"
+               data-val="true"
+               data-val-regex="@Constants.TEMPORAL_DATA_ERROR"
+               data-val-regex-pattern="^(?!.*\b[Tt][Ee][Mm][Pp][Oo][Rr][Aa][Ll]\b).*$" />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="LastName" class="form-label">Last Name</label>
+        <input asp-for="LastName" class="form-control"
+               maxlength="30"
+               data-val="true"
+               data-val-regex="@Constants.TEMPORAL_DATA_ERROR"
+               data-val-regex-pattern="^(?!.*\b[Tt][Ee][Mm][Pp][Oo][Rr][Aa][Ll]\b).*$" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label">Email</label>
+        <input asp-for="Email" class="form-control" type="email" maxlength="100" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Phone" class="form-label">Phone</label>
+        <input asp-for="Phone" class="form-control" type="tel" maxlength="15" />
+        <span asp-validation-for="Phone" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="BirthDate" class="form-label">Birth Date</label>
+        <input asp-for="BirthDate" class="form-control" type="date" />
+        <span asp-validation-for="BirthDate" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Save Changes</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@if (TempData["Error"] != null)
+{
+    <div class="text-danger mt-3">@TempData["Error"]</div>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

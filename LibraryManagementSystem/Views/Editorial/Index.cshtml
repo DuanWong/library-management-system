@@ -1,0 +1,51 @@
+﻿@model List<LibraryManagementSystem.Model.Editorial>
+@{
+    ViewData["Title"] = "Editorials";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (User.IsInRole("Librarian"))
+
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Add New Editorial</a>
+    </p>
+}
+
+<table class="table table-striped table-bordered">
+    <thead class="table-light">
+        <tr>
+            <th>Editorial Id</th>
+            <th>Editorial Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var editorial in Model)
+            {
+                <tr>
+                    <td>@editorial.EditorialId</td>
+                    <td>@editorial.Name</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@editorial.EditorialId" class="btn btn-info btn-sm">Details</a>
+
+                        @if (User.IsInRole("Librarian"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@editorial.EditorialId" class="btn btn-warning btn-sm">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@editorial.EditorialId" class="btn btn-danger btn-sm">Delete</a>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="text-center">There are no registered editorials.</td>
+            </tr>
+        }
+    </tbody>
+</table>

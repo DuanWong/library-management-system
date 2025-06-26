@@ -1,0 +1,23 @@
+﻿@model LibraryManagementSystem.Model.Editorial
+@{
+    ViewData["Title"] = "Edit Editorial";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="EditorialId" />
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label">Editorial Name</label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Save Changes</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,38 @@
+﻿@model MyAccountViewModel
+
+@{
+    ViewData["Title"] = "My Account";
+}
+
+<h2>My Account</h2>
+
+<div class="card p-3 mb-3">
+    <h4>User Info</h4>
+    <p><strong>Full Name:</strong> @Model.Reader.FullName</p>
+    <p><strong>Core ID:</strong> @Model.Reader.CoreId</p>
+    <p><strong>Birthday:</strong> @Model.Reader.BirthDate</p>
+    <p><strong>Email:</strong> @Model.Reader.Email</p>
+    <p><strong>Phone Number:</strong> @Model.Reader.Phone</p>
+</div>
+
+<div class="card p-3">
+    <h4>Checked Out Books</h4>
+
+    @if (!Model.Loans.Any()) {
+        <p>You have no books currently checked out.</p>
+    }
+    else {
+        foreach (var loan in Model.Loans) {
+            <div class="mb-3">
+                <p><strong>Loan ID:</strong> @loan.LoanId</p>
+                <p><strong>Initial Date:</strong> @loan.InitialDate?.ToShortDateString()</p>
+                <p><strong>Final Date:</strong> @loan.FinalDate?.ToShortDateString()</p>
+                <ul>
+                    @foreach (var detail in loan.LoanDetails) {
+                        <li><strong>Book:</strong> @detail.Book?.Title</li>
+                    }
+                </ul>
+            </div>
+        }
+    }
+</div>

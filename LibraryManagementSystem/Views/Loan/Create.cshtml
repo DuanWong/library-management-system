@@ -1,0 +1,120 @@
+﻿@using LibraryManagementSystem.Model
+@model Loan
+
+@{
+    ViewData["Title"] = "Add New Loan";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post">
+            <div class="mb-3">
+                <label asp-for="ReaderId" class="form-label">Reader</label>
+                <select asp-for="ReaderId" class="form-select" asp-items="@(new SelectList(ViewBag.Readers, "ReaderId", "FullName"))">
+                    <option value="">-- Select Reader --</option>
+                </select>
+                <span asp-validation-for="ReaderId" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="InitialDate" class="form-label">Initial Date</label>
+                <input asp-for="InitialDate"
+                       class="form-control"
+                       type="date"
+                       value="@DateTime.Now.ToString("yyyy-MM-dd")"
+                       readonly />
+                <span asp-validation-for="InitialDate" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="FinalDate" class="form-label">Final Date</label>
+                <input asp-for="FinalDate"
+                       class="form-control"
+                       type="date"
+                       value="@DateTime.Now.AddDays(15).ToString("yyyy-MM-dd")" />
+                <span asp-validation-for="FinalDate" class="text-danger"></span>
+            </div>
+
+            <p>
+                <button type="button" class="btn btn-primary" onclick="addBook()">Add New Book</button>
+            </p>
+
+            <table class="table table-striped table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Book</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="booksTableBody">
+                    @if (Model?.LoanDetails != null && Model.LoanDetails.Any())
+                    {
+                        for (int i = 0; i < Model.LoanDetails.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    <select asp-for="LoanDetails[i].BookId" class="form-select" asp-items="@(new SelectList(ViewBag.Books, "BookId", "Title"))">
+                                        <option value="">-- Select Book --</option>
+                                    </select>
+                                    <span asp-validation-for="LoanDetails[i].BookId" class="text-danger"></span>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteBook(this)">Delete</button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </form>
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="text-danger mt-3">@TempData["Error"]</div>
+        }
+
+        @section Scripts {
+            <partial name="_ValidationScriptsPartial" />
+
+            <script>
+                var books = @Html.Raw(Json.Serialize(ViewBag.Books));
+                var booksOptions = `<option value=''>-- Select Book --</option>` + books.map(e =>
+                    `<option value="${e.bookId}">${e.title}</option>`
+                ).join('');
+
+                function addBook() {
+                    var index = document.querySelectorAll('#booksTableBody tr').length;
+                    var newRow = `<tr>
+                        <td>
+                            <select name="LoanDetails[${index}].BookId" class="form-select"
+                                    data-val="true"
+                                    data-val-required="Book is required">
+                                ${booksOptions}
+                            </select>
+                            <span class="text-danger field-validation-valid"
+                                  data-valmsg-for="LoanDetails[${index}].BookId"
+                                  data-valmsg-replace="true"></span>
+                        </td>
+                        <td>
+                            <input type="hidden" name="LoanDetails[${index}].BookId" value="0" />
+                            <input type="hidden" name="LoanDetails[${index}].LoanId" value="0" />
+                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteBook(this)">Delete</button>
+                        </td>
+                    </tr>`;
+
+                    document.querySelector('#booksTableBody').insertAdjacentHTML('beforeend', newRow);
+                    $.validator.unobtrusive.parse('#booksTableBody');
+                }
+
+                function deleteBook(button) {
+                    button.closest('tr').remove();
+                }
+            </script>
+        }
+    </div>
+</div>

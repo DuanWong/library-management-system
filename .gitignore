@@ -1,0 +1,70 @@
+# Archivos generados por Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+bin/
+obj/
+out/
+Debug/
+Release/
+
+# Archivos de configuración y caché de NuGet
+*.nupkg
+packages/
+project.lock.json
+project.assets.json
+nuget.lock.json
+global.json
+
+# Archivos de configuración y logs
+appsettings.*.json
+*.log
+logs/
+dump/
+
+# Dependencias de Node.js (si usas frontend con React o Angular)
+node_modules/
+npm-debug.log
+yarn.lock
+pnpm-lock.yaml
+
+# Archivos de configuración de IDEs
+.idea/
+*.code-workspace
+.vscode/
+
+# Archivos de Docker y Kubernetes temporales
+*.iml
+.dockerignore
+.kube/
+
+# Archivos de publicación y despliegue
+publish/
+# wwwroot/
+# wwwroot/lib/
+# wwwroot/dist/
+
+# Certificados de desarrollo
+*.pfx
+*.p12
+
+# Archivos de depuración y dumps
+*.pdb
+*.stackdump
+*.dmp
+
+# Ejecutables y binarios
+*.exe
+*.dll
+*.pdb
+*.so
+*.dylib
+*.a
+*.lib
+*.o
+*.obj
+*.zip

@@ -1,0 +1,228 @@
+﻿@using LibraryManagementSystem.Model
+@model Book
+
+@{
+    ViewData["Title"] = "Edit Book";
+    int counter = 0;
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Edit">
+    <input type="hidden" asp-for="BookId" />
+
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label">Title</label>
+        <input asp-for="Title" class="form-control" maxlength="50" required />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Author(s)</label>
+
+        @if (!string.IsNullOrWhiteSpace(Model.Authors))
+        {
+            <p class="form-control" style="background-color: white; height: 37px;" readonly>@Model.Authors</p>
+        }
+        else
+        {
+            <p class="form-control" style="background-color: white; height: 37px;" readonly>
+                <a asp-controller="Author" asp-action="Index">Assign this book to an author</a>
+            </p>
+        }
+    </div>
+
+
+    <div class="mb-3">
+        <label asp-for="SubjectId" class="form-label">Subject</label>
+        <select asp-for="SubjectId" class="form-select" asp-items="@(new SelectList(ViewBag.Subjects, "SubjectId", "Name"))" required>
+            <option value="">-- Select a Subject --</option>
+        </select>
+        <span asp-validation-for="SubjectId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Synopsis" class="form-label">Synopsis</label>
+        <textarea asp-for="Synopsis" class="form-control" rows="5" maxlength="500"></textarea>
+        <span asp-validation-for="Synopsis" class="text-danger"></span>
+    </div>
+    <input type="hidden" name="Photo" id="Photo" value="photo" />
+
+    <p>
+        <button type="button" class="btn btn-primary" onclick="addEdition()">Add New Edition</button>
+    </p>
+
+    <table class="table table-striped table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>ISBN</th>
+                <th>Editorial</th>
+                <th>Edition Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="editionsTableBody">
+            @if (Model?.Editions != null && Model.Editions.Any())
+            {
+                for (int i = 0; i < Model.Editions.Count; i++)
+                {
+                    counter++;
+                    <tr>
+                        <td>
+                            <input asp-for="Editions[i].ISBN" class="form-control" maxlength="13" />
+                            <span asp-validation-for="Editions[i].ISBN" class="text-danger"></span>
+                        </td>
+                        <td>
+                            <select asp-for="Editions[i].EditorialId" class="form-select" asp-items="@(new SelectList(ViewBag.Editorials, "EditorialId", "Name"))">
+                                <option value="">-- Select Editorial --</option>
+                            </select>
+                            <span asp-validation-for="Editions[i].EditorialId" class="text-danger"></span>
+                        </td>
+                        <td>
+                            <input asp-for="Editions[i].EditionDate" type="date" class="form-control" />
+                            <span asp-validation-for="Editions[i].EditionDate" class="text-danger"></span>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteEdition(this)">Delete</button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    @if (counter == 0)
+    {
+        <table class="table table-striped" id="noRows">
+            <tbody>
+                <tr>
+                    <td colspan="3" class="text-center">There are no registered editions.</td>
+                </tr>
+            </tbody>
+        </table>
+    }
+
+    <button type="submit" class="btn btn-success">Save Changes</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@if (TempData["Error"] != null)
+{
+    <div class="text-danger mt-3">@TempData["Error"]</div>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        var editorials = @Html.Raw(Json.Serialize(ViewBag.Editorials));
+        var editorialsOptions = `<option value=''>-- Select Editorial --</option>` + editorials.map(e =>
+            `<option value="${e.editorialId}">${e.name}</option>`
+        ).join('');
+
+        function addEdition() {
+            var index = document.querySelectorAll('#editionsTableBody tr').length;
+            var noRows = document.querySelector('#noRows');
+
+            if (noRows) {
+                noRows.remove();
+            }
+
+            var newRow = `<tr>
+                <td>
+                    <input name="Editions[${index}].ISBN" class="form-control"
+                           data-val="true"
+                           data-val-required="ISBN is required"
+                           type="text" maxlength="13" />
+                    <span class="text-danger field-validation-valid"
+                          data-valmsg-for="Editions[${index}].ISBN"
+                          data-valmsg-replace="true"></span>
+                </td>
+                <td>
+                    <select name="Editions[${index}].EditorialId" class="form-select"
+                            data-val="true"
+                            data-val-required="Editorial is required">
+                        ${editorialsOptions}
+                    </select>
+                    <span class="text-danger field-validation-valid"
+                          data-valmsg-for="Editions[${index}].EditorialId"
+                          data-valmsg-replace="true"></span>
+                </td>
+                <td>
+                    <input name="Editions[${index}].EditionDate" type="date" class="form-control"
+                           data-val="true"
+                           data-val-required="Edition date is required" />
+                    <span class="text-danger field-validation-valid"
+                          data-valmsg-for="Editions[${index}].EditionDate"
+                          data-valmsg-replace="true"></span>
+                </td>
+                <td>
+                    <input type="hidden" name="Editions[${index}].EditionId" value="0" />
+                    <input type="hidden" name="Editions[${index}].BookId" value="0" />
+                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteEdition(this)">Delete</button>
+                </td>
+            </tr>`;
+
+            document.querySelector('#editionsTableBody').insertAdjacentHTML('beforeend', newRow);
+            $.validator.unobtrusive.parse('#editionsTableBody');
+        }
+
+        function deleteEdition(button) {
+            button.closest('tr').remove();
+            reindexEditions();
+        }
+
+        function reindexEditions() {
+            const rows = document.querySelectorAll('#editionsTableBody tr');
+            rows.forEach((row, index) => {
+                // ISBN
+                const isbnInput = row.querySelector('input[type="text"][name^="Editions"][name$=".ISBN"]');
+                if (isbnInput) {
+                    isbnInput.name = `Editions[${index}].ISBN`;
+                }
+
+                // EditorialId
+                const select = row.querySelector('select[name^="Editions"][name$=".EditorialId"]');
+                if (select) {
+                    select.name = `Editions[${index}].EditorialId`;
+                }
+
+                // EditionDate
+                const editionDateInput = row.querySelector('input[type="date"][name^="Editions"][name$=".EditionDate"]');
+                if (editionDateInput) {
+                    editionDateInput.name = `Editions[${index}].EditionDate`;
+                }
+
+                // EditionId (hidden)
+                const editionIdInput = row.querySelector('input[type="hidden"][name^="Editions"][name$=".EditionId"]');
+                if (editionIdInput) {
+                    editionIdInput.name = `Editions[${index}].EditionId`;
+                }
+
+                // BookId (hidden)
+                const bookIdInput = row.querySelector('input[type="hidden"][name^="Editions"][name$=".BookId"]');
+                if (bookIdInput) {
+                    bookIdInput.name = `Editions[${index}].BookId`;
+                }
+
+                // Span de validación para ISBN
+                const isbnSpan = row.querySelector('span[data-valmsg-for$=".ISBN"]');
+                if (isbnSpan) {
+                    isbnSpan.setAttribute('data-valmsg-for', `Editions[${index}].ISBN`);
+                }
+
+                // Span de validación para EditorialId
+                const editorialSpan = row.querySelector('span[data-valmsg-for$=".EditorialId"]');
+                if (editorialSpan) {
+                    editorialSpan.setAttribute('data-valmsg-for', `Editions[${index}].EditorialId`);
+                }
+
+                // Span de validación para EditionDate
+                const editionDateSpan = row.querySelector('span[data-valmsg-for$=".EditionDate"]');
+                if (editionDateSpan) {
+                    editionDateSpan.setAttribute('data-valmsg-for', `Editions[${index}].EditionDate`);
+                }
+            });
+        }
+
+    </script>
+}

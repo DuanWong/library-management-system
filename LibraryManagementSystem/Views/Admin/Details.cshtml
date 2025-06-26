@@ -1,0 +1,25 @@
+﻿@using LibraryManagementSystem.ViewModels
+@model LibrarianViewModel
+
+@{
+    ViewData["Title"] = "Librarian Details";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">@Model.Email</h4>
+
+        <dl class="row">
+            <dt class="col-sm-4">Phone Number:</dt>
+            <dd class="col-sm-8">@Model.PhoneNumber</dd>
+        </dl>
+
+        @if(User.IsInRole("Admin"))
+        {
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+        }
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>

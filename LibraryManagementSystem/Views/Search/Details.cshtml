@@ -1,0 +1,126 @@
+﻿@using LibraryManagementSystem.Model
+@model Book
+
+@{
+    ViewData["Title"] = "Book Details";
+    int currentRating = ViewBag.CurrentRating ?? 0;
+    string currentComment = ViewBag.CurrentComment ?? "";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">@Model.Title</h4>
+
+        <dl class="row">
+            <dt class="col-sm-4">Id:</dt>
+            <dd class="col-sm-8">@Model.BookId</dd>
+
+            <dt class="col-sm-4">Author(s):</dt>
+            <dd class="col-sm-8">@Model.Authors</dd>
+
+            <dt class="col-sm-4">Subject:</dt>
+            <dd class="col-sm-8">@Model.Subject?.Name</dd>
+
+            <dt class="col-sm-4">Synopsis:</dt>
+            <dd class="col-sm-8">@Model.Synopsis</dd>
+        </dl>
+
+        <table class="table table-striped table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>ISBN</th>
+                    <th>Editorial</th>
+                    <th>Edition Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Editions?.Any() == true)
+                {
+                    @foreach (var ed in Model.Editions.OrderBy(e => e.EditionId))
+                    {
+                        <tr>
+                            <td>@ed.ISBN</td>
+                            <td>@ed.Editorial?.Name</td>
+                            <td>@ed.EditionDate.ToShortDateString()</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="3" class="text-center">There are no registered editions.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @if (User.IsInRole("Reader"))
+        {
+            <form asp-action="Rate" asp-controller="Search" method="post" class="mt-4">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="BookId" value="@Model.BookId" />
+                <input type="hidden" id="rating" name="Rate" value="@currentRating" />
+
+                <div class="mb-3">
+                    <label class="form-label">Your Rating</label>
+                    <div id="starContainer">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <img src="~/images/@(i <= currentRating ? "star-filled.png" : "star-empty.png")"
+                                 class="star"
+                                 data-value="@i"
+                                 style="width: 30px; cursor: pointer;" />
+                        }
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="comment" class="form-label">Your Comment</label>
+                    <textarea id="comment" name="Comment" class="form-control" rows="4" maxlength="500"
+                              placeholder="Write your thoughts about the book...">@currentComment</textarea>
+                </div>
+
+                <button type="submit" class="btn btn-success">Save Reaction</button>
+            </form>
+        }
+
+        @if (User.IsInRole("Librarian"))
+        {
+            <a asp-action="Edit" asp-route-id="@Model.BookId" class="btn btn-primary mt-3">Edit</a>
+        }
+
+        <a asp-action="Search" class="btn btn-secondary mt-3">Back to List</a>
+        <br />
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="text-danger mt-3">@TempData["Error"]</div>
+        }
+        @if (TempData["Success"] != null)
+        {
+            <div class="text-success mt-3">@TempData["Success"]</div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const stars = document.querySelectorAll(".star");
+        const ratingInput = document.getElementById("rating");
+
+        stars.forEach(star => {
+            star.addEventListener("click", function () {
+                const value = parseInt(this.getAttribute("data-value"));
+                ratingInput.value = value;
+
+                stars.forEach((s, i) => {
+                    s.src = i < value
+                        ? "/images/star-filled.png"
+                        : "/images/star-empty.png";
+                });
+            });
+        });
+    </script>
+}

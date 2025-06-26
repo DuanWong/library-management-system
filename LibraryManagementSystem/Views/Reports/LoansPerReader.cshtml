@@ -1,0 +1,89 @@
+﻿@using LibraryManagementSystem.Model
+@using LibraryManagementSystem.ViewModels
+@model LoansPerReaderFormViewModel
+
+@{
+    ViewData["Title"] = "Loans Per Reader";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="container px-4">
+    <form asp-action="LoansPerReader" method="post">
+        @if (User.IsInRole("Librarian"))
+        {
+            <div class="mb-3">
+                <label asp-for="ReaderFullName" class="form-label">Reader</label>
+                <input asp-for="ReaderFullName" class="form-control" maxlength="100" />
+                <span asp-validation-for="ReaderFullName" class="text-danger"></span>
+            </div>
+        }
+
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label">Email</label>
+            <input asp-for="Email"
+            class="form-control"
+            maxlength="100"
+            readonly="@(!User.IsInRole("Librarian") && Model.Email != null ? "readonly" : null)" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <p>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </p>
+
+        <table class="table table-striped table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>Reader Full Name</th>
+                    <th>Email</th>
+                    <th>Age</th>
+                    <th>Initial Date</th>
+                    <th>Final Date</th>
+                    <th>Title(s)</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Results != null)
+                {
+                    @foreach (var reader in Model.Results)
+                    {
+                        <tr>
+                            <td>@reader.ReaderFullName</td>
+                            <td>@reader.Email</td>
+                            <td>@reader.Age</td>
+
+                            @if (reader.Loans.Count == 0)
+                            {
+                                <td colspan="3">Without loans yet</td>
+                            }
+                            else
+                            {
+                                @foreach (var loan in reader.Loans)
+                                {
+
+                                        <td>@loan.InitialDate</td>
+                                        <td>@loan.FinalDate</td>
+                                        <td>
+                                            @(string.Join(", ", loan.LoanDetails.Select(ld => ld.Book?.Title)))
+                                        </td>
+                                }
+                            }
+
+                            <td>
+                                <a asp-action="Details" asp-route-id="@reader.ReaderId" class="btn btn-info btn-sm">Details</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center">There are no readers for the search performed.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </form>
+</div>

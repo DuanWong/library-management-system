@@ -1,0 +1,38 @@
+﻿@using LibraryManagementSystem.Model
+@model Reader
+
+@{
+    ViewData["Title"] = "Reader Details";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">@Model.FullName</h4>
+
+        <dl class="row">
+            <dt class="col-sm-4">Id:</dt>
+            <dd class="col-sm-8">@Model.ReaderId</dd>
+
+            <dt class="col-sm-4">First Name:</dt>
+            <dd class="col-sm-8">@Model.FirstName</dd>
+
+            <dt class="col-sm-4">Last Name:</dt>
+            <dd class="col-sm-8">@Model.LastName</dd>
+
+            <dt class="col-sm-4">Phone:</dt>
+            <dd class="col-sm-8">@Model.Phone</dd>
+
+            <dt class="col-sm-4">Birth Date:</dt>
+            <dd class="col-sm-8">@Model.BirthDate</dd>
+
+        </dl>
+
+        @if(User.IsInRole("Librarian"))
+        {
+            <a asp-action="Edit" asp-controller="Reader" asp-route-id="@Model.ReaderId" class="btn btn-primary">Edit</a>
+        }
+        <a asp-action="LoansPerReader" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>
