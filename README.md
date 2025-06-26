@@ -28,10 +28,10 @@ The system uses the following tables:
 - **Rating**: Stores user ratings and reviews for books.
 
 ## Technology Stack
-- **Frontend**: ASP.NET MVC, Razor Pages, Bootstrap
+- **Frontend**: ASP.NET Core MVC, Bootstrap
 - **Backend**: ASP.NET Core, C#
 - **Database**: SQL Server
-- **Authentication**: Identity Framework (JWT-based authentication)
+- **Authentication**: ASP.NET Core Identity
 
 ## Installation
 1. **Prerequisites**:
@@ -47,7 +47,7 @@ The system uses the following tables:
    - Start the application.
 
 3. **Default Accounts**:
-   - Librarian: `admin@library.com` (password: Admin123!)
+   - Librarian: `johndoe@library.com` (password: Admin123!)
    - Readers: Register an account using the registration function.
 
 ## Usage
