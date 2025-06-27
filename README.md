@@ -55,6 +55,9 @@ The system uses the following tables:
 - **Readers**: Log in to search, borrow, return, and review books.
 
 ## What can Librarians do!
+- Main Page
+![Main Page](./ReadmeImages/MainPage.png)
+
 - View and Edit all Loans
 ![Loan Edit Page](./ReadmeImages/Loans.png)
 
