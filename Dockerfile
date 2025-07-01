@@ -7,7 +7,7 @@ WORKDIR /src
 COPY LibraryManagementSystem.BLL/ LibraryManagementSystem.BLL/
 COPY LibraryManagementSystem.DAL/ LibraryManagementSystem.DAL/
 COPY LibraryManagementSystem.Mapping/ LibraryManagementSystem.Mapping/
-COPY LibraryManagementSystem.Models/ LibraryManagementSystem.Models/
+COPY LibraryManagementSystem.Model/ LibraryManagementSystem.Model/
 COPY LibraryManagementSystem.Common/ LibraryManagementSystem.Common/
 COPY LibraryManagementSystem/ LibraryManagementSystem/
 
