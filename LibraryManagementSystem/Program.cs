@@ -13,7 +13,7 @@ namespace LibraryManagementSystem
 
             // Register dbcontext with the connection string from appsettings.json.
             builder.Services.AddDbContext<LibraryDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>() // Add support for roles.
@@ -62,8 +62,6 @@ namespace LibraryManagementSystem
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
-
-            DbInitializer.SeedDatabase(app.Services);
 
             app.Run();
         }

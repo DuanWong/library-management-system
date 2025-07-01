@@ -211,34 +211,37 @@ namespace LibraryManagementSystem.DAL
                       .IsRequired();
 
             // Check constraints.
-            modelBuilder.Entity<Author>()
-                .ToTable("Authors", tableBuilder =>
-                {
-                    string checkBirthDateAuthor = $"BirthDate <= DATEADD(YEAR, -{Constants.MINIMUN_AGE_TOBE_AUTHOR}, GETDATE())";
-                    tableBuilder.HasCheckConstraint("CK_Author_BirthDate", checkBirthDateAuthor);
-                    tableBuilder.HasCheckConstraint("CK_Author_DateOfDeath", "DateOfDeath IS NULL OR DateOfDeath <= GETDATE()");
-                    tableBuilder.HasCheckConstraint("CK_Author_BirthDate_DateOfDeath", "DateOfDeath IS NULL OR BirthDate < DateOfDeath");
-                });
+            if (Database.ProviderName != "Microsoft.EntityFrameworkCore.Sqlite")
+            {
+                modelBuilder.Entity<Author>()
+                    .ToTable("Authors", tableBuilder =>
+                    {
+                        string checkBirthDateAuthor = $"BirthDate <= DATEADD(YEAR, -{Constants.MINIMUN_AGE_TOBE_AUTHOR}, GETDATE())";
+                        tableBuilder.HasCheckConstraint("CK_Author_BirthDate", checkBirthDateAuthor);
+                        tableBuilder.HasCheckConstraint("CK_Author_DateOfDeath", "DateOfDeath IS NULL OR DateOfDeath <= GETDATE()");
+                        tableBuilder.HasCheckConstraint("CK_Author_BirthDate_DateOfDeath", "DateOfDeath IS NULL OR BirthDate < DateOfDeath");
+                    });
 
-            modelBuilder.Entity<Edition>()
-                .ToTable("Editions", tableBuilder =>
-                {
-                    tableBuilder.HasCheckConstraint("CK_Edition_EditionDate", "EditionDate IS NULL OR EditionDate <= GETDATE()");
-                });
+                modelBuilder.Entity<Edition>()
+                    .ToTable("Editions", tableBuilder =>
+                    {
+                        tableBuilder.HasCheckConstraint("CK_Edition_EditionDate", "EditionDate IS NULL OR EditionDate <= GETDATE()");
+                    });
 
-            modelBuilder.Entity<Loan>()
-                .ToTable("Loans", tableBuilder =>
-                {
-                    tableBuilder.HasCheckConstraint("CK_Loan_InitialDate", "InitialDate <= GETDATE()");
-                    tableBuilder.HasCheckConstraint("CK_Loan_InitialDate_FinalDate", "InitialDate <= FinalDate");
-                });
+                modelBuilder.Entity<Loan>()
+                    .ToTable("Loans", tableBuilder =>
+                    {
+                        tableBuilder.HasCheckConstraint("CK_Loan_InitialDate", "InitialDate <= GETDATE()");
+                        tableBuilder.HasCheckConstraint("CK_Loan_InitialDate_FinalDate", "InitialDate <= FinalDate");
+                    });
 
-            modelBuilder.Entity<Reader>()
-                .ToTable("Readers", tableBuilder =>
-                {
-                    string checkBirthDateReader = $"BirthDate IS NULL OR BirthDate <= DATEADD(YEAR, -{Constants.MINIMUN_AGE_TOBE_READER}, GETDATE())";
-                    tableBuilder.HasCheckConstraint("CK_Reader_BirthDay", checkBirthDateReader);
-                });
+                modelBuilder.Entity<Reader>()
+                    .ToTable("Readers", tableBuilder =>
+                    {
+                        string checkBirthDateReader = $"BirthDate IS NULL OR BirthDate <= DATEADD(YEAR, -{Constants.MINIMUN_AGE_TOBE_READER}, GETDATE())";
+                        tableBuilder.HasCheckConstraint("CK_Reader_BirthDay", checkBirthDateReader);
+                    });
+            }
 
             // Relationships.
             modelBuilder.Entity<BookAuthor>()
@@ -300,6 +303,163 @@ namespace LibraryManagementSystem.DAL
                 .WithMany(r => r.Loans)
                 .HasForeignKey(l => l.ReaderId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Subjects
+            modelBuilder.Entity<Subject>().HasData(
+                new Subject { SubjectId = 1, Name = "Fiction" },
+                new Subject { SubjectId = 2, Name = "Science Fiction" },
+                new Subject { SubjectId = 3, Name = "Biography" }
+            );
+
+            // Authors
+            modelBuilder.Entity<Author>().HasData(
+                new Author
+                {
+                    AuthorId = 1,
+                    FirstName = "John",
+                    LastName = "Doe",
+                    BirthDate = new DateTime(1980, 4, 1),
+                    Biography = "John Doe is a fictional character."
+                },
+                new Author
+                {
+                    AuthorId = 2,
+                    FirstName = "Jane",
+                    LastName = "Smith",
+                    BirthDate = new DateTime(1975, 2, 15),
+                    Biography = "Jane Smith writes about science and history."
+                }
+            );
+
+            // Editorials
+            modelBuilder.Entity<Editorial>().HasData(
+                new Editorial { EditorialId = 1, Name = "Penguin Books" },
+                new Editorial { EditorialId = 2, Name = "HarperCollins" }
+            );
+
+            // Books
+            modelBuilder.Entity<Book>().HasData(
+                new Book
+                {
+                    BookId = 1,
+                    Title = "The Great Adventure",
+                    SubjectId = 1,
+                    Synopsis = "An epic tale of adventure and discovery.",
+                    Photo = "photo1.jpg"
+                },
+                new Book
+                {
+                    BookId = 2,
+                    Title = "Journey Through Time",
+                    SubjectId = 2,
+                    Synopsis = "A thrilling story about time travel and its consequences.",
+                    Photo = "photo2.jpg"
+                }
+            );
+
+            // Editions
+            modelBuilder.Entity<Edition>().HasData(
+                new Edition
+                {
+                    EditionId = 1,
+                    BookId = 1,
+                    EditorialId = 1,
+                    ISBN = "9781234567890",
+                    EditionDate = new DateTime(2025, 1, 1)
+                },
+                new Edition
+                {
+                    EditionId = 2,
+                    BookId = 2,
+                    EditorialId = 2,
+                    ISBN = "9789876543210",
+                    EditionDate = new DateTime(2025, 2, 1)
+                }
+            );
+
+            // BookAuthors
+            modelBuilder.Entity<BookAuthor>().HasData(
+                new BookAuthor { BookAuthorId = 1, BookId = 1, AuthorId = 1 },
+                new BookAuthor { BookAuthorId = 2, BookId = 2, AuthorId = 2 }
+            );
+
+            // Readers
+            modelBuilder.Entity<Reader>().HasData(
+                new Reader
+                {
+                    ReaderId = 1,
+                    CoreId = "reader001",
+                    FirstName = "Alice",
+                    LastName = "Johnson",
+                    Email = "alice@example.com",
+                    Phone = "(204) 555-1234",
+                    BirthDate = new DateTime(1990, 1, 15)
+                },
+                new Reader
+                {
+                    ReaderId = 2,
+                    CoreId = "reader002",
+                    FirstName = "Bob",
+                    LastName = "Williams",
+                    Email = "bob@example.com",
+                    Phone = "(204) 555-5678",
+                    BirthDate = new DateTime(1985, 7, 20)
+                }
+            );
+
+            // Loans
+            modelBuilder.Entity<Loan>().HasData(
+                new Loan
+                {
+                    LoanId = 1,
+                    ReaderId = 1,
+                    InitialDate = new DateTime(2025, 3, 15),
+                    FinalDate = new DateTime(2025, 5, 15)
+                },
+                new Loan
+                {
+                    LoanId = 2,
+                    ReaderId = 2,
+                    InitialDate = new DateTime(2025, 3, 16),
+                    FinalDate = new DateTime(2025, 5, 16)
+                }
+            );
+
+            // LoanDetails
+            modelBuilder.Entity<LoanDetail>().HasData(
+                new LoanDetail
+                {
+                    LoanDetailId = 1,
+                    LoanId = 1,
+                    BookId = 1
+                },
+                new LoanDetail
+                {
+                    LoanDetailId = 2,
+                    LoanId = 2,
+                    BookId = 2
+                }
+            );
+
+            // Ratings
+            modelBuilder.Entity<Rating>().HasData(
+                new Rating
+                {
+                    RatingId = 1,
+                    ReaderId = 1,
+                    BookId = 1,
+                    Rate = 5,
+                    Comment = "An amazing adventure story!"
+                },
+                new Rating
+                {
+                    RatingId = 2,
+                    ReaderId = 2,
+                    BookId = 2,
+                    Rate = 4,
+                    Comment = "A thrilling time travel novel!"
+                }
+            );
         }
     }
 }
