@@ -30,23 +30,10 @@ The system uses the following tables:
 ## Technology Stack
 - **Frontend**: ASP.NET Core MVC, Bootstrap
 - **Backend**: ASP.NET Core, C#
-- **Database**: SQL Server
+- **Database**: SQLite
 - **Authentication**: ASP.NET Core Identity
 
-## Installation
-1. **Prerequisites**:
-   - .NET Core SDK
-   - SQL Server
-   - Visual Studio (recommended)
-
-2. **Setup**:
-   - Clone the repository.
-   - Restore NuGet packages.
-   - Update the connection string in `appsettings.json` to point to your SQL Server instance.
-   - Run database migrations to create the schema.
-   - Start the application.
-
-3. **Default Accounts**:
+## Default Accounts:
    - Librarian: `johndoe@library.com` (password: Admin123!)
    - Readers: Register an account using the registration function.
 
