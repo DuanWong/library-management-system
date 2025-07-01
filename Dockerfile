@@ -6,7 +6,6 @@ WORKDIR /src
 # 复制所有项目文件夹到容器里
 COPY LibraryManagementSystem.BLL/ LibraryManagementSystem.BLL/
 COPY LibraryManagementSystem.DAL/ LibraryManagementSystem.DAL/
-COPY LibraryManagementSystem.Mapping/ LibraryManagementSystem.Mapping/
 COPY LibraryManagementSystem.Model/ LibraryManagementSystem.Model/
 COPY LibraryManagementSystem.Common/ LibraryManagementSystem.Common/
 COPY LibraryManagementSystem/ LibraryManagementSystem/
